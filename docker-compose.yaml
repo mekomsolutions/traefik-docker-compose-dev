@@ -1,0 +1,40 @@
+version: '3'
+
+networks:
+  web:
+    external: true
+
+services:
+  traefik:
+    image: traefik:v2.6
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "./config/traefik.yml:/etc/traefik/traefik.yml"
+      - ./config/tls.yml:/etc/traefik/tls.yml
+      - "./letsencrypt:/letsencrypt"
+      - certs:/etc/ssl/traefik
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.traefik.rule: "Host(`${traefik_api_url}`)"
+      traefik.http.routers.traefik.entrypoints: "websecure"
+      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.middlewares: "auth"
+      traefik.http.middlewares.auth.basicauth.users: "${admin_user}:${admin_password}"
+    depends_on:
+      reverse-proxy-https-helper:
+        condition: service_completed_successfully
+  reverse-proxy-https-helper:
+    image: alpine
+    command: sh -c "cd /etc/ssl/traefik
+      && wget traefik.me/fullchain.pem -O cert.pem
+      && wget traefik.me/privkey.pem -O privkey.pem"
+    volumes:
+      - certs:/etc/ssl/traefik
+volumes:
+  certs:
