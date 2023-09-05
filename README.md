@@ -1,5 +1,5 @@
 # Traefik Dev Setup for Ozone
-This is a simple setup Traefik used for Development of Ozone. It provides local development with propers https domains backed by https://traefik.me/
+This is a simple setup Traefik used for Development of Ozone. It provides local development with proper https domains backed by https://traefik.me/
 
 ## Setup
 Clone the project
