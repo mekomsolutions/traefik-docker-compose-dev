@@ -1,17 +1,16 @@
 # Traefik Dev Setup for Ozone
-This is a simple setup Traefik used for Development of Ozone. It provides local development with proper https domains backed by https://traefik.me/
+This is a simple Traefik setup for Ozone developers. It provides local development with `https` domains backed by https://traefik.me/
 
 ## Setup
-Clone the project
-
-```https://github.com/mekomsolutions/traefik-docker-compose-dev```
-
-Create the network that will be shared between Traefik and Ozone.
-
-```docker network create web```
-
-Then start the project
-
-```docker compose up -d```
-
-
+First clone the project:
+```bash
+git clone https://github.com/mekomsolutions/traefik-docker-compose-dev
+```
+Then create the network that will be shared between Traefik and Ozone:
+```bash
+docker network create web
+```
+Finally, start the project:
+```bash
+docker compose up -d
+```
