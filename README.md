@@ -1,16 +1,49 @@
-# Traefik Dev Setup for Ozone
-This is a simple Traefik setup for Ozone developers. It provides local development with `https` domains backed by https://traefik.me/
+# Traefik v2 HTTPS (SSL) on localhost
 
-## Setup
-First clone the project:
-```bash
-git clone https://github.com/mekomsolutions/traefik-docker-compose-dev
+This repo is a minimal template to use Traefik v2 on localhost with HTTPS support.
+
+
+
+To get started, just clone this repo:
+
 ```
-Then create the network that will be shared between Traefik and Ozone:
+git clone https://github.com/mekomsolutions/traefik-docker-compose-dev.git
+```
+
+
+
+Next, go to the root of the repo (`cd traefik-ssl-self-signed`) and generate certificates using [mkcert](https://github.com/FiloSottile/mkcert) :
+
+```bash
+# If it's the first install of mkcert, run
+mkcert -install
+
+# Note (macOS): mkcert may ask for your password multiple times during install (Keychain + system trust store). This is expected.
+
+# Generate certificate for domain "docker.localhost", "domain.local" and their sub-domains
+mkcert -cert-file certs/local-cert.pem -key-file certs/local-key.pem "docker.localhost" "*.docker.localhost" "domain.local" "*.domain.local"
+```
+
+
+Create networks that will be used by Traefik:
+
 ```bash
 docker network create web
-```
-Finally, start the project:
+``` 
+
+
+Now, start containers with : 
+
 ```bash
-docker compose up -d
+# Start Traefik
+docker-compose -f docker-compose.yml up -d
+# Start "whoami" example
+docker-compose -f whoami.yml up
 ```
+
+
+
+You can now go to your browser at [whoami.docker.localhost](https://whoami.docker.localhost) :rocket: !
+
+*Note: you can access to Træfik dashboard at: [traefik.docker.localhost](https://traefik.docker.localhost)*
+
