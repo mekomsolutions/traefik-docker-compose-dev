@@ -25,7 +25,11 @@ entryPoints:
     http:
       redirections:
         entryPoint:
-          to: https
+          to: websecure
           scheme: https
-  https:
+  # Named "websecure" for compatibility with Ozone HIS (ozone-docker-compose)
+  # http.tls applies TLS by default to all routers on this entrypoint (no per-service tls: true needed)
+  websecure:
     address: ":443"
+    http:
+      tls: {}

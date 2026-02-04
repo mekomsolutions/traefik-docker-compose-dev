@@ -11,11 +11,10 @@ services:
       # For more information, see: https://docs.traefik.io/providers/docker/#exposedbydefault
       - "traefik.enable=true"
       # Define the network that should be used
-      - "traefik.docker.network=proxy"
-      # URL to reach this container
+      - "traefik.docker.network=web"
+      # URL to reach this container (TLS applied by default on websecure entrypoint)
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
-      # Activation of TLS
-      - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
       # If port is different than 80, use the following service:
       # - "traefik.http.services.<service_name>.loadbalancer.server.port=<port>"
     networks:

@@ -3,6 +3,8 @@ http:
     traefik:
       rule: "Host(`traefik.docker.localhost`)"
       service: "api@internal"
+      entryPoints:
+        - websecure
       tls:
         domains:
           - main: "docker.localhost"
@@ -13,6 +15,12 @@ http:
               - "*.domain.local"
 
 tls:
+  # Default cert for all routers on websecure (used when services don't set tls explicitly)
+  stores:
+    default:
+      defaultCertificate:
+        certFile: "/etc/certs/local-cert.pem"
+        keyFile: "/etc/certs/local-key.pem"
   certificates:
     - certFile: "/etc/certs/local-cert.pem"
       keyFile: "/etc/certs/local-key.pem"

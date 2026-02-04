@@ -1,49 +1,65 @@
 # Traefik v2 HTTPS (SSL) on localhost
 
-This repo is a minimal template to use Traefik v2 on localhost with HTTPS support.
+Minimal Traefik v2 setup for localhost with HTTPS. TLS is enabled by default for all routers on the **websecure** entrypoint, so services do not need `traefik.http.routers.<name>.tls=true`.
 
-
-
-To get started, just clone this repo:
+## Project layout
 
 ```
-git clone https://github.com/mekomsolutions/traefik-docker-compose-dev.git
+.
+├── config/
+│   ├── static.yml   # Traefik static config (entrypoints, providers, API)
+│   └── dynamic.yml  # TLS certs, dashboard router
+├── certs/           # Create this; put mkcert output here
+├── docker-compose.yml
+├── whoami.yml       # Example service
+└── README.md
 ```
 
+## Prerequisites
 
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [mkcert](https://github.com/FiloSottile/mkcert) (for local CA and certs)
 
-Next, go to the root of the repo (`cd traefik-ssl-self-signed`) and generate certificates using [mkcert](https://github.com/FiloSottile/mkcert) :
+## Setup
 
-```bash
-# If it's the first install of mkcert, run
-mkcert -install
+1. **Clone and go to the project root**
 
-# Note (macOS): mkcert may ask for your password multiple times during install (Keychain + system trust store). This is expected.
+   ```bash
+   cd traefik-v2-https-ssl-localhost
+   ```
 
-# Generate certificate for domain "docker.localhost", "domain.local" and their sub-domains
-mkcert -cert-file certs/local-cert.pem -key-file certs/local-key.pem "docker.localhost" "*.docker.localhost" "domain.local" "*.domain.local"
-```
+2. **Install mkcert and generate certificates** (first time only)
 
+   ```bash
+   mkcert -install
+   mkdir -p certs
+   mkcert -cert-file certs/local-cert.pem -key-file certs/local-key.pem \
+     "docker.localhost" "*.docker.localhost" "domain.local" "*.domain.local"
+   ```
 
-Create networks that will be used by Traefik:
+   On macOS, mkcert may prompt for your password (Keychain + system trust).
 
-```bash
-docker network create web
-``` 
+3. **Create the Docker network**
 
+   ```bash
+   docker network create web
+   ```
 
-Now, start containers with : 
+4. **Start Traefik**
 
-```bash
-# Start Traefik
-docker-compose -f docker-compose.yml up -d
-# Start "whoami" example
-docker-compose -f whoami.yml up
-```
+   ```bash
+   docker-compose up -d
+   ```
 
+5. **Start the whoami example** (optional)
 
+   ```bash
+   docker-compose -f whoami.yml up -d
+   ```
 
-You can now go to your browser at [whoami.docker.localhost](https://whoami.docker.localhost) :rocket: !
+## Access
 
-*Note: you can access to Træfik dashboard at: [traefik.docker.localhost](https://traefik.docker.localhost)*
+- **Whoami:** https://whoami.docker.localhost  
+- **Traefik dashboard:** https://traefik.docker.localhost  
 
+HTTP (port 80) redirects to HTTPS (port 443).
